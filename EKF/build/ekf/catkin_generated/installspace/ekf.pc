@@ -1,0 +1,8 @@
+prefix=/home/thrun/Desktop/muner_assignment_2023/EKF/install
+
+Name: ekf
+Description: Description of ekf
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: nav_msgs roscpp std_msgs
