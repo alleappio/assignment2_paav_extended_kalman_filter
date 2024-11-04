@@ -85,7 +85,8 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 	MatrixXd K = PHt * Si;
 
 	//new estimate
-	x_ = x_ + K+y;
+	x_ = x_ + K*y;
+	cout << "sono vivo" << endl;	
 	long x_size = x_.size();
 	MatrixXd I = MatrixXd::Identity(x_size, x_size);
 	P_ = (I-K*H_)*P_;
