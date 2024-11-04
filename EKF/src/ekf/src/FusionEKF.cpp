@@ -47,10 +47,10 @@ FusionEKF::FusionEKF() {
 	 * Initialize the state matrix P
 	*/
 	ekf_.P_ = MatrixXd(4, 4);
-	ekf_.P_ << ?, 0, 0, 0,
-			  0, ?, 0, 0,
-			  0, 0, ?, 0,
-			  0, 0, 0, ?;
+	ekf_.P_ << 1, 0, 0, 0,
+			  0, 1, 0, 0,
+			  0, 0, 1000, 0,
+			  0, 0, 0, 1000;
 
 	//the initial transition matrix F_
 	ekf_.F_ = MatrixXd(4, 4);
@@ -122,22 +122,30 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	 * Modify the F matrix so that the time is integrated
 	*/
 	float dt_2 = dt*dt;
-	float dt_3 = ?;
-	float dt_4 = ?;
-	ekf_.F_ << ?, 0, ?, 0,
-			  0, ?, 0, ?,
-			  0, 0, ?, 0,
-			  0, 0, 0, ?;
+	float dt_3 = dt_2*dt;
+	float dt_4 = dt_3*dt;
+	ekf_.F_ << 1, 0, dt, 0,
+			  0, 1, 0, dt,
+			  0, 0, 1, 0,
+			  0, 0, 0, 1;
 
 	/** TODO
 	 * set the process covariance matrix Q
 	 * use noise_ax = 9 and noise_ay = 9 for your Q matrix.
 	*/
+	double noise_ax = 9;
+	double noise_ay = 9;
+	double dt_2_noise_ax = dt_2 * noise_ax;
+	double dt_2_noise_ay = dt_2 * noise_ay;
+	double dt_3_noise_ax = dt_3/2 * noise_ax;
+	double dt_3_noise_ay = dt_3/2 * noise_ay;
+	double dt_4_noise_ax = dt_4/4 * noise_ax;
+	double dt_4_noise_ay = dt_4/4 * noise_ay;
 	ekf_.Q_ = MatrixXd(4, 4);
-	ekf_.Q_ <<  ?, 0, ?, 0,
-				0, ?, 0, ?,
-				?, 0, ?, 0,
-				0, ?, 0, ?;
+	ekf_.Q_ <<  dt_4_noise_ax, 0, dt_3_noise_ax, 0,
+				0, dt_4_noise_ay, 0, dt_3_noise_ay,
+				dt_3_noise_ax, 0, dt_2_noise_ax, 0,
+				0, dt_3_noise_ay, 0, dt_2_noise_ay;
 	ekf_.Predict();
 
 	/*****************************************************************************
@@ -157,6 +165,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 		ekf_.H_=t_.CalculateJacobian(ekf_.x_);
 		ekf_.R_=R_radar_;
 		//call the updateEKF function
+		ekf_.UpdateEKF(measurement_pack.raw_measurements_);
 	} else {
 		ekf_.H_=H_laser_;
 		ekf_.R_=R_laser_;
@@ -164,6 +173,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 	 	* Calculate the update function
 		*/
 		//call the update function
+		ekf_.Update(measurement_pack.raw_measurements_);
 	}
 
 	// print the  output
