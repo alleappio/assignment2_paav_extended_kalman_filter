@@ -65,7 +65,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 	if (fabs(rho)<0.0001){
 		rho_dot = 0;	
 	}else{
-		rho_dot = (x_[2]+x_[1])/std::hypot(x_[2],x_[1]);
+		rho_dot = (x_[0]*x_[2]+x_[1]*x_[3])/std::hypot(x_[0],x_[1]);
 	}
 	VectorXd z_pred(3);
 	z_pred<<rho, phi, rho_dot;
