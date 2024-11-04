@@ -36,7 +36,7 @@ void writeResults(){
     std::ofstream myfile;
     myfile.open("../res.txt", std::ios_base::app);
     myfile<<estimations.back()[0]<<" "<<estimations.back()[1]<<" "
-          <<ground_truth.back()[0]<<" "<<ground_truth.back()[0]<<" "
+          <<ground_truth.back()[0]<<" "<<ground_truth.back()[1]<<" "
           <<RMSE(0)<<" "<<RMSE(1)<<std::endl;
     myfile.close();
 
